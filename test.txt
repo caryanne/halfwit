@@ -1,1 +1,0 @@
-connect to irc.freenode.net. join #quake3d
