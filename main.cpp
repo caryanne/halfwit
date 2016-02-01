@@ -13,7 +13,7 @@ int main(int argc, char** argv) {
   try {
     boost::asio::io_service io_service;
     tcp::resolver resolver(io_service);
-    tcp::resolver::query query (argv[1], "irc");
+    tcp::resolver::query query (argv[1], "6667");
 
     cout << "resolving " << argv[1] << endl;
     tcp::resolver::iterator endpoint_iterator = resolver.resolve(query);
@@ -28,6 +28,10 @@ int main(int argc, char** argv) {
     if(error)
       throw boost::system::system_error(error);
     cout << "connected!\n";
+
+    socket.write_some("USER halfwit . . :halfwitbot", error);
+    socket.write_some("NICK halfwit", error);
+
     for(;;) {
       vector<char> buf(128);
       socket.read_some(boost::asio::buffer(buf), error);
