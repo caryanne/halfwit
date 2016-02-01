@@ -1,4 +1,5 @@
 #include <iostream>
+#include <string>
 #include <vector>
 #include <boost/asio.hpp>
 
@@ -29,8 +30,15 @@ int main(int argc, char** argv) {
       throw boost::system::system_error(error);
     cout << "connected!\n";
 
-    socket.write_some("USER halfwit . . :halfwitbot", error);
-    socket.write_some("NICK halfwit", error);
+    string user_msg = "USER halfwitbot myhost server :halfwitbot\n";
+    string nick_msg = "NICK halfwitbot\n";
+    string join_msg = "JOIN #" + string(argv[2]) + "\n";
+    socket.write_some(boost::asio::buffer(user_msg), error);
+    socket.write_some(boost::asio::buffer(nick_msg), error);
+    socket.write_some(boost::asio::buffer(join_msg), error);
+
+    if(error)
+      throw boost::system::system_error(error);
 
     for(;;) {
       vector<char> buf(128);
@@ -39,6 +47,16 @@ int main(int argc, char** argv) {
         break;
       else if(error)
         throw boost::system::system_error(error);
+
+      string first_four(buf.begin(), buf.begin() + 4);
+      if(first_four.compare("PING") == 0) {
+        string pong_msg = string("PONG") + string(buf.begin() + 4, buf.end());
+        socket.write_some(boost::asio::buffer(pong_msg), error);
+        if(error)
+          throw boost::system::system_error(error);
+      }
+      
+
       for(auto i: buf)
         cout << i;
     }
