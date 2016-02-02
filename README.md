@@ -6,5 +6,5 @@ halfwit is a bare-bones IRC client implemented in C++. It connects to a desired 
 halfwit requires Boost::ASIO for networking operations.
 
 ## Usage
-    $ ./halfwit <server> <channel> | [target application]
+    $ ./halfwit <server> <channel> <username> <password> | [target application]
     
