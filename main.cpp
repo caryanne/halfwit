@@ -9,14 +9,7 @@ using namespace std;
 using namespace TCLAP;
 
 int main(int argc, char** argv) {
-  /*if(argc != 4) {
-    cerr << "Usage: halfwit <server> <channel> <username> <password>\n";
-    return 1;
-  }
-  static const string SERVER = argv[1];
-  static const string CHANNEL = argv[2];
-  static const string USERNAME = argv[3];
-  static const string PASSWORD = argv[4];*/
+
   try {
 
     CmdLine cmd("Halfwit - The dumb IRC client", ' ', "0.1");
@@ -54,8 +47,7 @@ int main(int argc, char** argv) {
 
     for(;;) {
       vector<char> buf(128);
-      buf.clear();
-      socket.read_some(boost::asio::buffer(buf), error);
+      size_t len = socket.read_some(boost::asio::buffer(buf), error);
       if(error == boost::asio::error::eof)
         break;
       else if(error)
@@ -63,7 +55,7 @@ int main(int argc, char** argv) {
 
       const string first_four(buf.begin(), buf.begin() + 4);
       if(first_four.compare("PING") == 0) {
-        string pong_msg = string("PONG") + string(buf.begin() + 4, buf.end());
+        string pong_msg = string("PONG") + string(buf.begin() + 4, buf.begin() + len);
         socket.write_some(boost::asio::buffer(pong_msg), error);
         if(error)
           throw boost::system::system_error(error);
